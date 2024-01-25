@@ -1,19 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 
-const replaceTemp = (ele, tempCard) => {
-	let ret = tempCard.replace(/{%IMAGE%}/g, ele.image);
-	ret = ret.replace(/{%PRODUCTNAME%}/g, ele.productName);
-	ret = ret.replace(/{%ID%}/g, ele.id);
-	ret = ret.replace(/{%PRICE%}/g, ele.price);
-	ret = ret.replace(/{%QUANTITY%}/g, ele.quantity);
-	ret = ret.replace(/{%FROM%}/g, ele.form);
-	ret = ret.replace(/{%NUTRIENTS%}/g, ele.nutrients);
-	ret = ret.replace(/{%DESCRIPTION%}/g, ele.description);
-
-	if (!ele.organic) ret = ret.replace('{%NOT_ORGANIC%}', 'not-organic');
-	return ret;
-};
+const replaceTemp = require('./modules/replaceTemp');
 
 const tempCard = fs.readFileSync(
 	`${__dirname}/templates/template-card.html`,
@@ -52,10 +40,9 @@ const server = http.createServer((req, res) => {
 		const product = contentObj[query.get('id')];
 
 		const productHtml = replaceTemp(product, tempProduct);
-	
+
 		res.end(productHtml);
-	
-   } else if (pathname === '/api') {
+	} else if (pathname === '/api') {
 		res.writeHead(200, {
 			'Content-type': 'application/json',
 		});
